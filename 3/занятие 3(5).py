@@ -8,5 +8,5 @@ def f ():
         return b
     if c<=a and c<=b:
         return c
-print(f())
+f()
     
