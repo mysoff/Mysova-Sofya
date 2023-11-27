@@ -5,7 +5,7 @@ A=[
  [8,-3,-11,-12],
  [-3,-2,-3,1]]
 def F(A):
-    k=[[0 for _ in range(len(A[0]))]for _ in range(len(A))]
+    k=[[0 for m in range(len(A[0]))]for m in range(len(A))]
     for i in range(len(A)):
         for j in range(len(A[i])):
             if A[i][j] < 0:
