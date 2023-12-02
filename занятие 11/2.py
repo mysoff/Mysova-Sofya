@@ -3,9 +3,9 @@ import tkinter as tk
 import json
 def get_json(name):
     url = f"https://api.github.com/users/{name}"
-    a=requests.get(url)
-    if a.status_code == 200:
-        return a.json()
+    response=requests.get(url)
+    if response.status_code == 200:
+        return response.json()
     else:
         return None
 def get_r():
