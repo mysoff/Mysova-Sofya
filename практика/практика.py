@@ -6,7 +6,7 @@ from telegram.ext import Application, CommandHandler, CallbackQueryHandler, Call
 import os
 import zipfile
 import io
-import httpx
+import requests
 
 TOKEN = '6447059182:AAGyIHsVgI_uUnOAP3Y8SoqYg0oG2Szk-Lw'
 UNPLASH_API_KEY = 'BFzscqOw57170cRzcDREQ8bYOsfTlLuWdVyRz64sDfs'
@@ -16,7 +16,7 @@ async def start(update: Update, context: CallbackContext):
 async def handle_message(update: Update, context: CallbackContext):
     context.user_data['phrase'] = update.message.text
     keyboard = [
-        [InlineKeyboardButton(str(i), callback_data=str(i)) for i in range(1, 11)]
+        [InlineKeyboardButton(str(i), callback_data=str(i)) for i in range(1, 9)]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text('Выберите количество изображений:', reply_markup=reply_markup)
@@ -31,28 +31,28 @@ async def button(update: Update, context: CallbackContext):
 
     await send_filtered_images(query, phrase, count, loading_message)
 
-async def search_unsplash_images(query, api_key, count=10):
+async def search_unsplash_images(query, api_key, count=8):
     url = "https://api.unsplash.com/search/photos"
     headers = {"Authorization": f"Client-ID {api_key}"}
     params = {"query": query, "per_page": count}
-    async with httpx.AsyncClient() as client:
-        response = await client.get(url, headers=headers, params=params)
-        response.raise_for_status()
-        search_results = response.json()
+    
+    response = requests.get (url, headers=headers, params=params)
+    response.raise_for_status()
+    search_results = response.json()
 
-        images_urls = [item["urls"]["regular"] for item in search_results["results"]]
-        return images_urls
+    images_urls = [item["urls"]["regular"] for item in search_results["results"]]
+    return images_urls
 async def send_filtered_images(query, phrase, count, loading_message):
     try:
         images_urls = await search_unsplash_images(phrase, UNPLASH_API_KEY, count)
         zip_buffer = io.BytesIO()
 
-        async with httpx.AsyncClient() as client:
-            with zipfile.ZipFile(zip_buffer, 'a', zipfile.ZIP_DEFLATED, False) as zip_file:
-                for i, url in enumerate(images_urls):
-                    response = await client.get(url)
-                    image_name = f"image_{i}.jpg"
-                    zip_file.writestr(image_name, response.content)
+    
+        with zipfile.ZipFile(zip_buffer, 'a', zipfile.ZIP_DEFLATED, False) as zip_file:
+            for i, url in enumerate(images_urls):
+                response = requests.get (url)
+                image_name = f"image_{i}.jpg"
+                zip_file.writestr(image_name, response.content)
 
         zip_buffer.seek(0)
         await query.message.reply_document(document=zip_buffer, filename=phrase+'.zip')
