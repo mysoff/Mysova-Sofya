@@ -87,6 +87,19 @@ class Group {
         }
         return -1;
     }
+    public static Kid findKidInGroup(Group group, String fullName) {
+        List<Kid> kids = group.getKids();
+        for (Kid kid : kids) {
+            if (kid.getFullName().equalsIgnoreCase(fullName)) {
+                return kid;
+            }
+        }
+        return null;
+    }
+
+    public int getId() {
+        return getGroupId();
+    }
 
     public String getName() {
         return name;
@@ -98,6 +111,6 @@ class Group {
 
     @Override
     public String toString() {
-        return "Группа: " + name + " номер: " + number + ", дети: " + getKids();
+        return "Name_group: " + name + " Number_group: " + number + ", children: " + getKids();
     }
 }

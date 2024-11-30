@@ -15,7 +15,7 @@ class Head {
     public void showHead() {
         boolean flag = true;
         while (flag) {
-            System.out.println("1 добавить группу");
+            System.out.println("\n1 добавить группу");
             System.out.println("2 удалить группу");
             System.out.println("3 добавить ребенка в группу");
             System.out.println("4 удалить ребенка из группы");
@@ -61,7 +61,7 @@ class Head {
         String groupName = scanner.nextLine();
         System.out.print("Введите номер группы: ");
         int groupNumber = scanner.nextInt();
-        scanner.nextLine(); // Считываем оставшийся символ новой строки
+        scanner.nextLine();
         nursery.addGroup(new Group(groupName, groupNumber, nursery.getConnection()));
     }
 
@@ -96,7 +96,7 @@ class Head {
             String childGender = scanner.nextLine();
             System.out.print("Введите возраст ребенка: ");
             int childAge = scanner.nextInt();
-            scanner.nextLine(); // Считываем оставшийся символ новой строки
+            scanner.nextLine();
 
             group.addKid(new Kid(childFullName, childGender, childAge));
             System.out.println("Ребенок добавлен");
@@ -116,7 +116,7 @@ class Head {
         if (group != null) {
             System.out.print("Введите ФИО ребенка для удаления: ");
             String childFullNameToRemove = scanner.nextLine();
-            Kid kidToRemove = findKidInGroup(group, childFullNameToRemove);
+            Kid kidToRemove = Group.findKidInGroup(group, childFullNameToRemove);
             if (kidToRemove != null) {
                 group.removeKid(kidToRemove);
                 System.out.println("Ребенок удален");
@@ -126,16 +126,6 @@ class Head {
         } else {
             System.out.println("Такой группы нет");
         }
-    }
-
-    private Kid findKidInGroup(Group group, String fullName) {
-        List<Kid> kids = group.getKids();
-        for (Kid kid : kids) {
-            if (kid.getFullName().equalsIgnoreCase(fullName)) {
-                return kid;
-            }
-        }
-        return null;
     }
 
     private void exit() {

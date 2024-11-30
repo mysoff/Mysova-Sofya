@@ -1,6 +1,9 @@
 package org.example;
 
+import javax.swing.*;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 class Nursery {
     private final Connection connection;
@@ -29,12 +32,25 @@ class Nursery {
     }
 
     public void removeGroup(Group group) {
-        String sql = "DELETE FROM groups WHERE name = ?";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, group.getName());
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        int groupId = group.getId();
+        if (groupId != -1) {
+            String sqlDeleteKids = "DELETE FROM kids WHERE group_id = ?";
+            String sqlDeleteGroup = "DELETE FROM groups WHERE id = ?";
+
+            try (PreparedStatement statementDeleteKids = connection.prepareStatement(sqlDeleteKids);
+                 PreparedStatement statementDeleteGroup = connection.prepareStatement(sqlDeleteGroup)) {
+
+                statementDeleteKids.setInt(1, groupId);
+                statementDeleteKids.executeUpdate();
+
+                statementDeleteGroup.setInt(1, groupId);
+                statementDeleteGroup.executeUpdate();
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Группа не найдена в базе данных.");
         }
     }
 
@@ -69,5 +85,22 @@ class Nursery {
             e.printStackTrace();
         }
         return null;
+    }
+    public void printGroups(JTextArea outputArea) {
+        String sql = "SELECT * FROM groups";
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql)) {
+            boolean hasGroups = false;
+            while (resultSet.next()) {
+                hasGroups = true;
+                Group group = new Group(resultSet.getString("name"), resultSet.getInt("number"), connection);
+                outputArea.append(group.toString() + "\n");
+            }
+            if (!hasGroups) {
+                outputArea.append("Нет доступных групп.\n");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

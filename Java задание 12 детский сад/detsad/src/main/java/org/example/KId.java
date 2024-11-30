@@ -1,5 +1,10 @@
 package org.example;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.List;
+
 class Kid {
     private final String fullName;
     private final String gender;
@@ -13,7 +18,7 @@ class Kid {
 
     @Override
     public String toString() {
-        return "ФИО: " + fullName + ", пол: " + gender + ", возраст: " + age;
+        return "full-name: " + fullName + ", gender: " + gender + ", age: " + age;
     }
 
     public String getFullName() {
