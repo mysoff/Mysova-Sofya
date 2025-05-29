@@ -1,0 +1,50 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/E-BallotBox
+    username: postgres
+    password: 30023031
+    driver-class-name: org.postgresql.Driver
+    # Ограничение до 1 соединения согласно требованиям задания
+    hikari:
+      maximum-pool-size: 1
+      minimum-idle: 1
+      
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=1000,expireAfterWrite=1h
+      
+# API Documentation
+springdoc:
+  api-docs:
+    path: /docs
+  swagger-ui:
+    path: /swagger-ui.html
+    
+# Логирование
+logging:
+  level:
+    org.example: DEBUG
+    org.springframework.cache: DEBUG
+    
+# Настройки приложения
+app:
+  pdf:
+    output-directory: ./results/
+  security:
+    # Простая аутентификация для демонстрации
+    enable-basic-auth: true 
